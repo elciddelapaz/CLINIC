@@ -30,15 +30,37 @@ const createPatient = async (req, res) => {
 }
 //delete patient
 const deletePatient = async (req, res) => {
+    const { id } = req.params
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ error: "Patient does not exist" })
+    }
+    const patient = await Patient.findOneAndDelete({ _id: id })
+    if (!patient) {
+        return res.status(404).json({ error: "Patient does not exist" })
+    }
 
+    res.status(200).json(patient)
 }
 //update patient
 const updatePatient = async (req, res) => {
+    const { id } = req.params
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ error: "Patient does not exist" })
+    }
+    const patient = await Patient.findByIdAndUpdate({ _id: id }, {
+        ...req.body
+    })
+    if (!patient) {
+        return res.status(404).json({ error: "Patient does not exist" })
+    }
 
+    res.status(200).json(patient)
 }
 
 module.exports = {
     createPatient,
     getAllPatients,
     getPatient,
+    deletePatient,
+    updatePatient
 }
